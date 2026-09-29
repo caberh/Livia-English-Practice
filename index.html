@@ -24,7 +24,23 @@ button.small,.nav button{min-height:46px;min-width:46px}
 @media screen and (max-width:420px){.cards{grid-template-columns:1fr}.pick .go{margin-top:8px}.top{flex-wrap:wrap}.toolbar .row{gap:6px}.question,.passage{padding:17px}.history-row{overflow-wrap:anywhere}}
 @media (pointer:coarse){button{touch-action:manipulation}.nav{gap:9px}.week{min-height:48px}}
 
-</style></head><body><div class="wrap"><header class="top"><div class="brand">Livia <span style="color:var(--green)">English Practice</span></div><div class="version">V0.11 © Capt. Caber<br>2026-09-29<span id="topModeBadge" style="display:block;margin-top:5px;font-weight:800"></span></div></header><div id="storageAlert" class="storage-alert hidden" role="status"></div>
+
+/* 家長試題檢查：全頁配色與持續顯示的模式提示。 */
+body.parent-check{--bg:#eadcf3;--paper:#fff9ff;--ink:#34263f;--muted:#65576e;--line:#b995ca;--green:#64357b;--soft:#ead6f3;--shadow:0 10px 30px #4d265414;background:#eadcf3}
+body.parent-check .wrap{border-left:5px solid #85429c;border-right:5px solid #85429c}
+body.parent-check #modeRibbon{display:block;position:sticky;top:0;z-index:20;background:#56306c;color:#fff;text-align:center;font-size:15px;font-weight:800;line-height:1.4;padding:10px 16px;box-shadow:0 3px 12px #30133c30}
+body.parent-check .toolbar{top:41px;background:#eadcf3f5}
+body.parent-check .group-study .passage{top:131px;max-height:calc(100vh - 156px)}
+body.parent-check .pick,body.parent-check .panel,body.parent-check .passage,body.parent-check .question,body.parent-check .stat{background:#fff9ff;border-color:#b995ca}
+body.parent-check .pick.v,body.parent-check .pick.g,body.parent-check .pick.r{border-top-color:#85429c}
+body.parent-check .exam-banner{background:#64357b}
+body.parent-check .exam-banner p{color:#f3e5fa}
+body.parent-check .exam-banner button{background:#f4d1ed;color:#34263f}
+body.parent-check .option.chosen{background:#eee0f4}
+body.parent-check #topModeBadge{color:#64357b!important}
+@media screen and (max-width:960px){body.parent-check .group-study .passage{position:static;max-height:none}}
+@media print{body.parent-check{background:white;color:black}body.parent-check .wrap{border:0}body.parent-check #modeRibbon{display:none!important}}
+</style></head><body><div id="modeRibbon" class="hidden" role="status">家長試題檢查中｜此處作答不會記入 Livia 正式紀錄</div><div class="wrap"><header class="top"><div class="brand">Livia <span style="color:var(--green)">English Practice</span></div><div class="version">V0.12 © Capt. Caber<br>2026-09-29<span id="topModeBadge" style="display:block;margin-top:5px;font-weight:800"></span></div></header><div id="storageAlert" class="storage-alert hidden" role="status"></div>
 <main id="home"><div class="intro"><div><div class="eyebrow">ENGLISH · 私中入學考練習</div><h1>Livia，今天練哪一種？</h1><p class="muted">每次10題，讀懂再加快。先看首次成績，再看重練進步。</p></div><div class="mini-stat"><strong>150</strong><div class="muted">題原創練習 · 36週課程對應</div></div></div><div id="resume" class="resume hidden"></div>
 <div class="cards"><button class="pick v" onclick="quick('V')"><span class="num">01 / VOCABULARY</span><h2>單字與片語</h2><p>50題 · 句意與用字判斷</p><span class="go">開始10題 →</span></button><button class="pick g" onclick="quick('G')"><span class="num">02 / GRAMMAR</span><h2>文法與句型</h2><p>50題 · 規則與整句判斷</p><span class="go">開始10題 →</span></button><button class="pick r" onclick="quick('R')"><span class="num">03 / READING</span><h2>閱讀與克漏字</h2><p>50題 · 17組完整文章</p><span class="go">開始10題 →</span></button></div>
 <div class="exam-banner"><div><h2>50分鐘模擬考</h2><p>60題／100分　單字20分＋文法40分＋閱讀40分<br>每類20題：基礎4題＋標準12題＋挑戰4題（20%／60%／20%）。<br>閱讀保留完整題組，涵蓋短、中、長篇及1篇4題克漏字；交卷後看解析。</p></div><button onclick="startExam()">開始模擬考</button></div>
@@ -37,6 +53,8 @@ button.small,.nav button{min-height:46px;min-width:46px}
 const DB=JSON.parse(document.getElementById('bank').textContent), BYID=Object.fromEntries(DB.questions.map(q=>[q.id,q])), PB=Object.fromEntries(DB.passages.map(p=>[p.id,p]));
 const TEST_MODE_KEY='livia-english-record-mode',TEST_DATA_KEY='livia-english-v002-test';
 const RECORD_MODE=(()=>{try{return localStorage.getItem(TEST_MODE_KEY)==='test'?'test':'livia'}catch(e){return 'livia'}})();
+document.body.classList.toggle('parent-check',RECORD_MODE==='test');
+if(RECORD_MODE==='test')document.getElementById('modeRibbon').classList.remove('hidden');
 const KEY=RECORD_MODE==='test'?TEST_DATA_KEY:'livia-english-v002', NAMES={V:'單字',G:'文法',R:'閱讀'}, LETTERS='ABCD';
 let state={wrong:[],history:[],active:null}, session=null, lastSeen=Date.now(), currentResult=null;
 const $=id=>document.getElementById(id), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
